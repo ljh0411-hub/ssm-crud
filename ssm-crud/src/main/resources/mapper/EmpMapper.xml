@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ljh.dao.EmpMapper">
+    <!-- 联表查询resultMap 
+    column:数据库中的列
+	property:对应的实体类中的属性
+    -->
+	<resultMap type="com.ljh.bean.Employee" id="empMap">
+		<id property="emp_id" column="emp_id"/>
+		<result property="emp_name" column="emp_name"/>
+		<result property="gender" column="gender"/>
+		<result property="email" column="email"/>
+		<result property="d_id" column="d_id"/>
+		<!-- 关联Department对象-->
+		<association property="department" javaType="com.ljh.bean.Department">
+			<id column="dept_id" property="dept_id"/>
+			<result column="dept_name" property="dept_name"/>
+		</association>
+	</resultMap>
+	<select id="findAll" resultMap="empMap" >
+		SELECT * FROM tbl_emp
+		LEFT JOIN tbl_dept ON tbl_emp.`d_id`=tbl_dept.`dept_id`
+	</select>
+	
+	<select id="findById" resultType="com.ljh.bean.Employee" parameterType="java.lang.Integer" >
+		SELECT * FROM tbl_emp WHERE emp_id=#{emp_id}
+	</select>
+	
+	<delete id="del" parameterType="java.lang.Integer">
+		delete from tbl_emp where emp_id=#{emp_id}
+	</delete>
+	
+	<insert id="insert" parameterType="com.ljh.bean.Employee" >
+   	 	insert into tbl_emp (emp_name, gender, email,d_id)
+   		values (#{emp_name}, #{gender}, #{email},#{d_id})
+    </insert>
+    
+    <update id="update" parameterType="com.ljh.bean.Employee">
+    	update tbl_emp 
+    	set emp_name=#{emp_name},gender=#{gender},email=#{email},d_id=#{d_id}
+    	where emp_id=#{emp_id}
+    </update>
+</mapper>
